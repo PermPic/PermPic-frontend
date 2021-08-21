@@ -3,54 +3,31 @@
     <div class="profile-barrier">
       <div class="head-portrait">
         <div class="face hvr-buzz">
-          <a
-            href="javascript:;"
-            v-if="wallet.address !== 'Login'"
-            @click="openLoginModal"
-          ></a>
+          <a href="javascript:;" v-if="wallet.address !== 'Login'" @click="openLoginModal"></a>
         </div>
       </div>
       <div class="info">
         <p class="name" @click="openLoginModal">{{ wallet.address }}</p>
+        <p v-if="wallet.address !== 'Login'">{{wallet.balance}}AR</p>
         <div class="nav">
           <ul>
             <li>
-              <a href="javascript:;" @click="goHome" class="hvr-wobble-top"
-                >主页</a
-              >
+              <a href="javascript:;" @click="goHome" class="hvr-wobble-top">主页</a>
             </li>
           </ul>
         </div>
         <div class="shortcut-menu">
-          <a
-            href="javascript:;"
-            class="hvr-wobble-top"
-            @click="clickShowCatalog"
-            >日志
-            <i
-              class="fa"
-              :class="{
+          <a href="javascript:;" class="hvr-wobble-top" @click="clickShowCatalog">日志
+            <i class="fa" :class="{
                 'fa-arrow-right': isShowCatalog,
                 ' fa-arrow-left': !isShowCatalog,
-              }"
-              aria-hidden="true"
-            ></i
-          ></a>
+              }" aria-hidden="true"></i></a>
         </div>
       </div>
     </div>
 
     <transition name="alert-fade">
-      <upload-login-modal
-        v-if="LoginModal"
-        @loginAlertCancel="loginAlertCancel"
-        @loginAlertOk="loginAlertOk"
-        :width="alertWidth"
-        :alertTitle="alertTitle"
-        :alertCallBackName="alertCallBackName"
-        :showFileList="showFileList"
-        :uploadTip="uploadTip"
-      >
+      <upload-login-modal v-if="LoginModal" @loginAlertCancel="loginAlertCancel" @loginAlertOk="loginAlertOk" :width="alertWidth" :alertTitle="alertTitle" :alertCallBackName="alertCallBackName" :showFileList="showFileList" :uploadTip="uploadTip">
       </upload-login-modal>
     </transition>
   </div>
@@ -59,14 +36,15 @@
 <script>
 import EventHub from "../../utils/EventHub";
 import uploadLoginModal from "../../components/modal/uploadLoginModal";
-import { getAddressForWallet } from "permpic-core-test";
+import { getAddressForWallet,  getWalletArBalance} from "permpic-core-test";
+
 export default {
   name: "ProfileBar",
   model: {
-    event: "isShowCatalog",
+    event: "isShowCatalog"
   },
   components: {
-    uploadLoginModal,
+    uploadLoginModal
   },
   data() {
     return {
@@ -77,11 +55,15 @@ export default {
       wallet: {
         address: this.$store.state.wallet.address || "Login",
         walletPrivateKey: {},
-      },
+        balance: this.$store.state.wallet.balance
+      }
     };
   },
   created() {
     EventHub.$emit("getBlogsList");
+    if (this.wallet.address) {
+      this.getBalance()
+    }
   },
   methods: {
     clickShowCatalog() {
@@ -95,7 +77,7 @@ export default {
     openLoginModal() {
       this.blog = {
         blogName: "",
-        blogTag: "",
+        blogTag: ""
       };
       this.alertTitle = "上传登录";
       this.alertWidth = 362;
@@ -105,18 +87,24 @@ export default {
     },
     async loginAlertOk(wallet) {
       this.wallet.walletPrivateKey = JSON.parse(wallet);
-      this.wallet.address = await getAddressForWallet(this.wallet.walletPrivateKey);
-      this.$store.state.wallet = this.wallet;
+      this.wallet.address = await getAddressForWallet(
+        this.wallet.walletPrivateKey
+      );
+      this.getBalance()
       if (this.wallet.address) {
         this.LoginModal = false;
         EventHub.$emit("goTip", ["登录成功!"]);
-        EventHub.$emit("getBlogsList", '1');
+        EventHub.$emit("getBlogsList", "1");
       }
     },
     loginAlertCancel() {
       this.LoginModal = false;
     },
-  },
+    async getBalance() {
+      this.wallet.balance = await getWalletArBalance(this.wallet.address);
+      this.$store.state.wallet = this.wallet;
+    }
+  }
 };
 </script>
 
