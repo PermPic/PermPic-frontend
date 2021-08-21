@@ -1,0 +1,86 @@
+/*pads布局*/
+.pads{
+    width: 100%;
+    height: calc(100% - 120px);
+    padding-top: 120px;
+}
+
+/*侧边栏布局*/
+.pads .pads-sidebar{
+    position: fixed;
+    top: 85px;
+    text-align: right;
+    font-size: 18px;
+    z-index: 10;
+    width: 20%;
+    height: calc(100% - 85px);
+}
+
+#scroll-box{
+    height: 100%;
+    width: 100%;
+}
+#scroll-box .protector{
+    margin-bottom: 1em;
+}
+/*pads内容*/
+.pads .pads-content{
+    margin-left: 20%;
+    width: 80%;
+    min-height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-left: 1px solid rgba(103, 103, 103, 0.13);
+}
+
+/*添加目录*/
+.pads .pads-sidebar .pads-operator .folder-operator-btn-group{
+    position: fixed;
+    top: 60px;
+    width: 20%;
+    text-align: right;
+    background-color: #000000;
+}
+.pads .pads-sidebar .pads-operator .folder-operator{
+    opacity: 0.2;
+    display: inline-block;
+    text-align: center;
+    width: 30px;
+}
+.pads .pads-sidebar .pads-operator .folder-operator:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+
+/*alert-fade*/
+.alert-fade-enter-active,
+.alert-fade-leave-active {
+    transition: opacity 1s ease;
+}
+.alert-fade-enter,
+.alert-fade-leave-to{
+    opacity: 0;
+}
+
+/*滚动条*/
+
+#scroll-box .mCSB_container_wrapper{
+    margin-bottom: 0;
+    margin-right: 0;
+}
+#scroll-box .mCSB_draggerRail{
+    width: 0;
+}
+#scroll-box .mCSB_dragger_bar{
+    width: 5px;
+    background-color: rgba(115, 115, 115, 0.88);
+    border-radius: 2px;
+}
+
+#scroll-box .mCSB_container{
+    margin-right: 20px;
+}
+
+.mCSB_draggerRail{
+    background-color: transparent!important;
+}
