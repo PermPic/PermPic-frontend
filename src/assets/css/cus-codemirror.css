@@ -1,0 +1,21 @@
+.CodeMirror {
+    flex: 1;
+    height: 100%;
+}
+.cm-s-darcula.CodeMirror{
+    background-color: rgba(43, 43, 43, 0.67);
+}
+.cm-s-darcula .CodeMirror-gutters{
+    background-color: rgba(54, 54, 54, 0.41);
+    border-right: none!important;
+}
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical{
+    background: transparent;
+}
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div{
+    background-color: rgba(70, 70, 70, 0.71);
+    border: none;
+}
+.CodeMirror-scrollbar-filler{
+    background: transparent;
+}

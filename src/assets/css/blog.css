@@ -1,0 +1,42 @@
+/*pads布局*/
+.blog{
+    width: 100%;
+    height: calc(100% - 60px);
+    padding-top: 60px;
+    font-family:'STXinwei','STXingkai','STKaiti', 'KaiTi','FangSong';
+    display: flex;
+}
+.profile-bar{
+    flex: 1;
+    max-width: 300px;
+    height: 100%;
+}
+.catalog-bar{
+    flex: 1;
+    max-width: 360px;
+}
+.blog-article{
+    flex: 1;
+    max-width: calc(100% - 660px);
+    box-sizing: border-box;
+    padding-top: 1em;
+}
+.blog-preview-list{
+    flex: 1;
+}
+.profile-bar .profile-barrier{
+    position: fixed;
+    top: 60px;
+    left: 0;
+    height: 100%;
+    width: 300px;
+    background-color: rgb(25, 25, 25);
+}
+.catalog-bar .catalog-barrier{
+    position: fixed;
+    top: 60px;
+    left:300px;
+    width: 360px;
+    background-color: rgb(37, 37, 37);
+    max-height: calc(100% - 60px);
+}
