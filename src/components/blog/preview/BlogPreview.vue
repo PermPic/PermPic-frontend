@@ -91,6 +91,10 @@ export default {
       this.popLoading = false;
     },
     async syncAr() {
+      if (this.$store.state.wallet.balance - this.arFee < 0) {
+        EventHub.$emit("goTip", ["AR 余额不足!", false, 1500]);
+        return false;
+      }
       let metaData;
       this.$store.state.logList.forEach((element, index) => {
         if (element.createTime == this.blog.createTime) {
@@ -107,7 +111,8 @@ export default {
           };
         }
       });
-
+      delete metaData.htmlContent;
+      delete metaData.textContent;
       let tx = await preparePermPicTransaction(
         this.$store.state.wallet,
         this.blog.htmlContent,
