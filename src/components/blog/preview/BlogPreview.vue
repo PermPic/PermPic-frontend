@@ -51,8 +51,7 @@ import EventHub from "../../../utils/EventHub";
 import {
   getArPrice,
   preparePermPicTransaction,
-  permPicUpload,
-  getPermPicData
+  permPicUpload
 } from "permpic-core-test";
 
 export default {
@@ -111,10 +110,17 @@ export default {
           };
         }
       });
-      delete metaData.htmlContent;
-      delete metaData.textContent;
+      metaData.htmlContent && delete metaData.htmlContent;
+      metaData.textContent && delete metaData.textContent;
+      // if (metaData.htmlContent) {
+      //   delete metaData.htmlContent;
+      // }
+      // if (metaData.textContent) {
+      //   delete metaData.textContent;
+      // }
+      const { address, balance, walletPrivateKey } = this.$store.state.wallet;
       let tx = await preparePermPicTransaction(
-        this.$store.state.wallet,
+        { address, balance, walletPrivateKey },
         this.blog.htmlContent,
         metaData
       );
