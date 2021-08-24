@@ -12,12 +12,12 @@
         <div class="nav">
           <ul>
             <li>
-              <a href="javascript:;" @click="goHome" class="hvr-wobble-top">主页</a>
+              <a href="javascript:;" @click="goHome" class="hvr-wobble-top">{{$t('blog.home')}}</a>
             </li>
           </ul>
         </div>
         <div class="shortcut-menu">
-          <a href="javascript:;" class="hvr-wobble-top" @click="clickShowCatalog">日志
+          <a href="javascript:;" class="hvr-wobble-top" @click="clickShowCatalog">{{$t('blog.blog')}}
             <i class="fa" :class="{
                 'fa-arrow-right': isShowCatalog,
                 ' fa-arrow-left': !isShowCatalog,
@@ -79,7 +79,7 @@ export default {
         blogName: "",
         blogTag: ""
       };
-      this.alertTitle = "上传登录";
+      this.alertTitle = this.$t('blog.uploadLogin');
       this.alertWidth = 362;
       this.alertCallBackName = ["loginAlertOk", "loginAlertCancel"];
       this.uploadTip = "";
@@ -93,7 +93,7 @@ export default {
       this.getBalance()
       if (this.wallet.address) {
         this.LoginModal = false;
-        EventHub.$emit("goTip", ["登录成功!"]);
+        EventHub.$emit("goTip", [this.$t('blog.loginSuccess')]);
         EventHub.$emit("getBlogsList", "1");
       }
     },

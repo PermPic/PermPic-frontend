@@ -6,8 +6,8 @@
                 <div class="halving-line"></div>
                 <slot name="content"></slot>
                 <div class="modal-actions">
-                    <button class="modal-cancel" v-if="alertCallBackName[1]" @click="$emit(alertCallBackName[1])">Cancel</button>
-                    <button class="modal-ok"  v-if="alertCallBackName[0]" @click="$emit(alertCallBackName[0])">Ok!</button>
+                    <button class="modal-cancel" v-if="alertCallBackName[1]" @click="$emit(alertCallBackName[1])">{{$t('blog.cancel')}}</button>
+                    <button class="modal-ok"  v-if="alertCallBackName[0]" @click="$emit(alertCallBackName[0])">{{$t('blog.confirm')}}</button>
                 </div>
             </div>
         </div>

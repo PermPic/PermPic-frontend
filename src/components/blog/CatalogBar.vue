@@ -100,7 +100,7 @@ export default {
         blogName: "",
         blogTag: ""
       };
-      this.alertTitle = "新建日志";
+      this.alertTitle = this.$t('blog.create');
       this.alertComponent = "updateBlogModal";
       this.alertWidth = 300;
       this.alertCallBackName = ["createBlogAlertOK", "createBlogAlertCancel"];
@@ -132,7 +132,7 @@ export default {
       };
       this.blogList.splice(0, 0, newBlog);
       this.folderAlert = false;
-      EventHub.$emit("goTip", ["创建成功!"]);
+      EventHub.$emit("goTip", [this.$t('blog.createSuccess')]);
       this.$store.state.logList.push(newBlog);
       this.$router.push({
         name: "blogArticle",

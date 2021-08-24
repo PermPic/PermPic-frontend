@@ -1,8 +1,8 @@
 <template>
     <div class="content">
-        <input class="form-control" type="text" placeholder="标题..."
+        <input class="form-control" type="text" :placeholder="$t('blog.title')"
                v-model="blog.blogName">
-        <input class="form-control" type="text" placeholder="标签... (多个以空格分割)"
+        <input class="form-control" type="text" :placeholder="$t('blog.dialog_tags')"
                v-model="blog.blogTags">
     </div>
 </template>

@@ -14,7 +14,7 @@
           :on-progress="onProgress"
         >
           <i class="el-icon-upload"></i>
-          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__text">{{$t('blog.dropFile')}}<em>{{$t('blog.clickUpload')}}</em></div>
           <div slot="tip" class="el-upload__tip" v-if="uploadTip">
             {{ uploadTip }}
           </div>
@@ -25,7 +25,7 @@
             v-if="alertCallBackName[1]"
             @click="$emit(alertCallBackName[1])"
           >
-            Cancel
+            {{$t('blog.cancel')}}
           </button>
           <!-- <button
             class="modal-ok"
@@ -62,7 +62,7 @@ export default {
       const reader = new FileReader();
       reader.readAsText(file.raw);
       reader.onerror = (e) => {
-        this.uploadTip = "读取文件错误,请重试";
+        this.uploadTip = this.$t('blog.readFileError');
       };
       reader.onload = (e) => {
         this.$emit(this.alertCallBackName[0], e.target.result);

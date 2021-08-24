@@ -1,11 +1,11 @@
 <template>
     <div class="read-blog">
-        <div class="go-back"><button class="hvr-wobble-top" @click="$emit('goBack')">返回</button></div>
+        <div class="go-back"><button class="hvr-wobble-top" @click="$emit('goBack')">{{$t('blog.back')}}</button></div>
         <div class="title word-ellipsis">{{readOrEdit.blog.title||"Untitled"}}</div>
         <div class="more-info">
             <div class="author word-ellipsis">
                 <i class="fa fa-user-o" aria-hidden="true"></i>
-                <span>{{readOrEdit.blog.author||'匿名'}}</span>
+                <span>{{readOrEdit.blog.author|| $t('blog.anonymous')}}</span>
             </div>
             <div class="date">
                 <i class="fa fa-calendar-o" aria-hidden="true"></i>
@@ -19,15 +19,15 @@
         </div>
         <div class="content ql-editor" v-html="readOrEdit.blog.htmlContent"></div>
         <div class="read-btn-group">
-            <a class="hvr-wobble-top" href="javascript:;" @click="editBlog"  v-if="!readOrEdit.blog.sync">修改</a>
+            <a class="hvr-wobble-top" href="javascript:;" @click="editBlog"  v-if="!readOrEdit.blog.sync"> {{$t('blog.edit')}}</a>
             <!-- <a class="hvr-wobble-top" href="javascript:;" @click="deleteBlog">删除</a> -->
         </div>
         <div class="continue-read">
             <div class="last-page hvr-wobble-top" @click="lastPage">
-                <a href="javascript:;" ><i class="fa fa-angle-double-left" aria-hidden="true"></i> 上一篇</a>
+                <a href="javascript:;" ><i class="fa fa-angle-double-left" aria-hidden="true"></i> {{$t('blog.prev')}}</a>
             </div>
             <div class="next-page hvr-wobble-top" @click="nextPage">
-                <a href="javascript:;">下一篇 <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                <a href="javascript:;"> {{$t('blog.next')}} <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>
@@ -66,7 +66,7 @@
                     EventHub.pageInfo.current = Math.ceil((myPos-2) / EventHub.pageInfo.pagenum);
                     this.$router.push({ name: 'blogArticle', params: { id: this.$store.state.logList[myPos-1].createTime, isReadable: true }});
                 }else{
-                    EventHub.$emit("goTip",["没有上一篇了!"]);
+                    EventHub.$emit("goTip",[this.$t('blog.noPrev')]);
                 }
             },
             nextPage(){
@@ -75,7 +75,7 @@
                     EventHub.pageInfo.current = Math.ceil((myPos+2) / EventHub.pageInfo.pagenum);
                     this.$router.push({ name: 'blogArticle', params: { id: this.$store.state.logList[myPos+1].createTime, isReadable: true }});
                 }else{
-                    EventHub.$emit("goTip",["没有下一篇了!"])
+                    EventHub.$emit("goTip",[this.$t('blog.noNext')])
                 }
             },
             deleteBlog(){

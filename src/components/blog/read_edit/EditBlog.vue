@@ -1,11 +1,11 @@
 <template>
   <div class="edit_blog">
     <div class="go-back">
-      <button class="hvr-wobble-top" @click="$emit('goBack')">返回</button>
+      <button class="hvr-wobble-top" @click="$emit('goBack')">{{$t('blog.back')}}</button>
     </div>
     <div class="title">
       <input
-        placeholder="输入标题.."
+        :placeholder="`${$t('blog.title')}..`"
         type="text"
         v-model="readOrEdit.blog.title"
       />
@@ -22,7 +22,7 @@
           v-show="isEditAuthor || editableAuthor"
           type="text"
           v-model="readOrEdit.blog.author"
-          placeholder="作者名称..."
+          :placeholder="`${$t('blog.author')}...`"
         />
       </div>
       <div class="date">
@@ -38,7 +38,7 @@
           v-show="isEditTags || editableTags"
           type="text"
           v-model="tags"
-          placeholder="标签..(多个标签以空格分割)"
+          :placeholder="`${$t('blog.dialog_tags')}`"
         />
       </div>
     </div>
@@ -50,8 +50,8 @@
       ></div>
     </div>
     <div class="commit">
-      <button class="btn hvr-wobble-top" @click="commitToPre">预览</button>
-      <button class="btn hvr-wobble-top" @click="saveBlog">保存</button>
+      <button class="btn hvr-wobble-top" @click="commitToPre">{{$t('blog.preview')}}</button>
+      <button class="btn hvr-wobble-top" @click="saveBlog">{{$t('blog.save')}}</button>
     </div>
   </div>
 </template>
@@ -158,7 +158,7 @@ export default {
         }
       });
       EventHub.makeBlogTags();
-      EventHub.$emit("goTip", ["保存成功!"]);
+      EventHub.$emit("goTip", [this.$t('blog.saveSuccess')]);
     },
     myEidtorBinds() {
       var that = this;

@@ -14,6 +14,7 @@ import Frame from "./Frame.vue";
 import operateTip from "./components/modal/OperateTip";
 import miniSelect from "./components/widget/miniSelect";
 import { Upload, Popover, Button, Loading } from "element-ui";
+import i18n from './i18n/i18n'
 import "element-ui/lib/theme-chalk/index.css";
 
 import router from "./router";
@@ -31,6 +32,7 @@ Vue.use(Loading.directive)
 new Vue({
   router,
   store,
+  i18n,
   created() {
     // 在页面加载时读取sessionStorage
     if (sessionStorage.getItem("store")) {

@@ -139,7 +139,7 @@ export default {
       }
     },
     async getPermPicData() {
-        this.readOrEdit.blog.htmlContent = await getPermPicData(this.readOrEdit.blog.arid)
+        this.readOrEdit.blog.htmlContent = (await getPermPicData(this.readOrEdit.blog.arid)).toString()
     }
   },
   watch: {
