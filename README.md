@@ -1,5 +1,7 @@
 # PermPic
 
+PermPic-frontend include core frontend that users can interact with PermPic to write wonderful diary/blog/notes and store it on Arweave to keep the eternal memory permanently
+
 
 ## Project setup
 ```

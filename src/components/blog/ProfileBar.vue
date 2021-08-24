@@ -36,7 +36,7 @@
 <script>
 import EventHub from "../../utils/EventHub";
 import uploadLoginModal from "../../components/modal/uploadLoginModal";
-import { getAddressForWallet,  getWalletArBalance} from "permpic-core-test";
+import { getAddressForWallet, getWalletArBalance } from "permpic-core-test";
 
 export default {
   name: "ProfileBar",
@@ -54,7 +54,7 @@ export default {
       uploadTip: "",
       wallet: {
         address: this.$store.state.wallet.address || "Login",
-        walletPrivateKey: {},
+        walletPrivateKey: this.$store.state.wallet.walletPrivateKey,
         balance: this.$store.state.wallet.balance
       }
     };
@@ -62,7 +62,7 @@ export default {
   created() {
     EventHub.$emit("getBlogsList");
     if (this.wallet.address) {
-      this.getBalance()
+      this.getBalance();
     }
   },
   methods: {
@@ -90,7 +90,7 @@ export default {
       this.wallet.address = await getAddressForWallet(
         this.wallet.walletPrivateKey
       );
-      this.getBalance()
+      this.getBalance();
       if (this.wallet.address) {
         this.LoginModal = false;
         EventHub.$emit("goTip", [this.$t('blog.loginSuccess')]);

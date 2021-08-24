@@ -2,7 +2,6 @@ import Vue from 'vue'
 import FrontConfig from '../config/FrontConfig'
 import store from '../store'
 import Data from './Data'
-import Utils from './Utils'
 var EventHub = new Vue({
   data: {
     /*padCards*/
