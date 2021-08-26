@@ -27,6 +27,9 @@ export default {
   mounted() {
     this.pageInfo.current = this.$route.params.page || 1;
     this.getPageBlogs(this.pageInfo.current);
+    EventHub.$on('changeBlogList', (blogList) => {
+      this.blogs = blogList
+    })
   },
   methods: {
     getPageBlogs: function (current) {

@@ -67,9 +67,7 @@ export default {
       isShowTags: true,
       blogList: this.$store.state.logList /*日志列表*/,
       blogTags: this.$store.state.tags,
-
       checkTagsState: null,
-
       folderAlert: false,
       alertWidth: "300",
       blogName: null,
@@ -100,7 +98,7 @@ export default {
         blogName: "",
         blogTag: ""
       };
-      this.alertTitle = this.$t('blog.create');
+      this.alertTitle = this.$t("blog.create");
       this.alertComponent = "updateBlogModal";
       this.alertWidth = 300;
       this.alertCallBackName = ["createBlogAlertOK", "createBlogAlertCancel"];
@@ -132,7 +130,7 @@ export default {
       };
       this.blogList.splice(0, 0, newBlog);
       this.folderAlert = false;
-      EventHub.$emit("goTip", [this.$t('blog.createSuccess')]);
+      EventHub.$emit("goTip", [this.$t("blog.createSuccess")]);
       this.$store.state.logList.push(newBlog);
       this.$router.push({
         name: "blogArticle",
@@ -153,6 +151,7 @@ export default {
         if (this.checkTagsState === tag) {
           this.checkTagsState = null;
           this.blogList = this.$store.state.logList;
+          EventHub.$emit("changeBlogList", this.blogList);
           return;
         } else {
           this.checkTagsState = tag;
@@ -165,6 +164,7 @@ export default {
           return v.tags.indexOf(tag) > -1;
         }
       });
+      EventHub.$emit("changeBlogList", this.blogList);
     },
     findCheckTagsState(tag) {
       return this.checkTagsState === tag;

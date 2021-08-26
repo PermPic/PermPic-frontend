@@ -5,7 +5,7 @@
     <!--导航栏-->
     <NavigationBar :isSearchable="isSearchable"></NavigationBar>
     <!--视图页-->
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
   </div>
 </template>
 
