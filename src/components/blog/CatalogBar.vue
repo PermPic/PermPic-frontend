@@ -2,9 +2,21 @@
   <div class="catalog-bar">
     <!--文件夹弹出框-->
     <transition name="alert-fade">
-      <operator-modal v-if="folderAlert" v-on:createBlogAlertOK="createBlogAlertOK" v-on:createBlogAlertCancel="createBlogAlertCancel" :width="alertWidth" :alertTitle="alertTitle" :alertCallBackName="alertCallBackName">
+      <operator-modal
+        v-if="folderAlert"
+        v-on:createBlogAlertOK="createBlogAlertOK"
+        v-on:createBlogAlertCancel="createBlogAlertCancel"
+        :width="alertWidth"
+        :alertTitle="alertTitle"
+        :alertCallBackName="alertCallBackName"
+      >
         <template slot="content">
-          <component v-bind:is="alertComponent" v-model="blog" :alertMsg="alertMsg" :blog="blog">
+          <component
+            v-bind:is="alertComponent"
+            v-model="blog"
+            :alertMsg="alertMsg"
+            :blog="blog"
+          >
           </component>
         </template>
       </operator-modal>
@@ -12,19 +24,32 @@
     <div class="catalog-barrier">
       <div class="header" id="catalog-barrier-tags">
         <div class="folding-tags">
-          <input type="checkbox" v-model="isShowTags" name="sex" id="male" class="chooseBtn" />
+          <input
+            type="checkbox"
+            v-model="isShowTags"
+            name="sex"
+            id="male"
+            class="chooseBtn"
+          />
           <label for="male" class="choose-label"></label>
         </div>
         <transition name="my-tags">
           <div class="my-tags" v-if="isShowTags">
-            <span v-for="tag in blogTags" :class="{ 'check-tag': findCheckTagsState(tag) }" @click="searchBlogByTag(tag)">{{ tag }}</span>
+            <span
+              v-for="tag in blogTags"
+              :class="{ 'check-tag': findCheckTagsState(tag) }"
+              @click="searchBlogByTag(tag)"
+              >{{ tag }}</span
+            >
           </div>
         </transition>
       </div>
       <div>
         <ul class="catalog-operator">
           <li id="add-blog">
-            <span class="new-file hvr-wobble-top" @click="createBlogAlert"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
+            <span class="new-file hvr-wobble-top" @click="createBlogAlert"
+              ><i class="fa fa-plus-circle" aria-hidden="true"></i
+            ></span>
           </li>
         </ul>
       </div>
@@ -36,7 +61,8 @@
             </div>
             <div class="date-and-tag">
               <div class="time">
-                <i class="fa fa-calendar" aria-hidden="true"></i><span>{{ blog.updateTime }}</span>
+                <i class="fa fa-calendar" aria-hidden="true"></i
+                ><span>{{ blog.updateTime }}</span>
               </div>
               <div class="tag word-ellipsis">
                 <i class="fa fa-tags" aria-hidden="true"></i>
@@ -60,7 +86,7 @@ export default {
   name: "CatalogBar",
   components: {
     operatorModal,
-    updateBlogModal
+    updateBlogModal,
   },
   data() {
     return {
@@ -75,20 +101,20 @@ export default {
       alertMsg: null,
       blog: {
         blogName: "",
-        blogTag: ""
-      }
+        blogTag: "",
+      },
     };
   },
   mounted() {
     Utils.makeScrollBar("#catalog-barrier-tags", {
       scrollInertia: 300,
       deltaFactor: 100,
-      axis: "y"
+      axis: "y",
     });
     Utils.makeScrollBar("#my-catalog-scroll", {
       scrollInertia: 300,
       deltaFactor: 100,
-      axis: "y"
+      axis: "y",
     });
     EventHub.makeBlogTags();
   },
@@ -96,7 +122,7 @@ export default {
     createBlogAlert() {
       this.blog = {
         blogName: "",
-        blogTag: ""
+        blogTag: "",
       };
       this.alertTitle = this.$t("blog.create");
       this.alertComponent = "updateBlogModal";
@@ -126,7 +152,7 @@ export default {
         tags: blogTags,
         isShowBanner: true,
         createTime: Date.parse(new Date()),
-        updateTime: Date.parse(new Date())
+        updateTime: Date.parse(new Date()),
       };
       this.blogList.splice(0, 0, newBlog);
       this.folderAlert = false;
@@ -134,7 +160,11 @@ export default {
       this.$store.state.logList.push(newBlog);
       this.$router.push({
         name: "blogArticle",
-        params: { id: newBlog.createTime, isReadable: false }
+        params: {
+          id: newBlog.createTime,
+          isReadable: false,
+          key: newBlog.title,
+        },
       });
     },
     createBlogAlertCancel() {
@@ -143,7 +173,7 @@ export default {
     readBlog(blog) {
       this.$router.push({
         name: "blogArticle",
-        params: { id: blog.createTime, isReadable: true }
+        params: { id: blog.createTime, isReadable: true, key: blog.title },
       });
     },
     searchBlogByTag(tag) {
@@ -168,8 +198,8 @@ export default {
     },
     findCheckTagsState(tag) {
       return this.checkTagsState === tag;
-    }
-  }
+    },
+  },
 };
 </script>
 

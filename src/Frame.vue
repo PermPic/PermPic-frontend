@@ -23,13 +23,13 @@ export default {
       isSearchable: false,
       /*tip*/
       showOperateTip: false,
-      operateResult: { msg: "操作成功!", status: true },
+      operateResult: { msg: this.$t('blog.operationSuccess'), status: true },
       showDuration: 1500
     };
   },
   methods: {
-    goTip(params = ["操作成功!", true, 1500]) {
-      this.operateResult.msg = params[0] || "操作成功!";
+    goTip(params = [this.$t('blog.operationSuccess'), true, 1500]) {
+      this.operateResult.msg = params[0] || this.$t('blog.operationSuccess');
       params[1] == false
         ? (this.operateResult.status = false)
         : (this.operateResult.status = params[1] || true);

@@ -7,6 +7,10 @@ const cn = {
     loginSuccess: "登录成功！",
     create: "新建日志",
     createSuccess: "创建成功!",
+    operationSuccess: "操作成功!",
+    copySuccessfully: "复制成功!",
+    copyFailed: "复制失败",
+    share: "分享",
     title: "标题",
     dialog_tags: "标签...(多个已空格分割)",
     cancel: "取消",
@@ -30,7 +34,7 @@ const cn = {
     waitBlockSync: "等待区块同步",
     dropFile: "将文件拖到此处，或",
     clickUpload: "点击上传",
-    readFileError: "读取文件错误,请重试"
+    readFileError: "读取文件错误,请重试",
   },
   ...zhLocale,
 };

@@ -10,7 +10,7 @@
       <p class="article">{{ blog.previewContent }}</p>
       <div class="more-group">
         <div class="more" v-if="isAll" @click="readMore">
-          <a>{{$t('blog.readAll')}}</a>
+          <a>{{ $t("blog.readAll") }}</a>
         </div>
         <div class="more" v-if="isAll && (!blog.sync || blog.sync == 1)">
           <el-popover
@@ -20,31 +20,34 @@
             @show="showArFee"
           >
             <div v-loading="popLoading">
-              <p>{{$t('blog.syncFee')}}<br />{{ arFee }}AR</p>
+              <p>{{ $t("blog.syncFee") }}<br />{{ arFee }}AR</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible = false"
-                  >{{$t('blog.cancel')}}</el-button
-                >
+                <el-button size="mini" type="text" @click="visible = false">{{
+                  $t("blog.cancel")
+                }}</el-button>
                 <el-button
                   type="danger"
                   size="mini"
                   @click="syncAr"
                   v-if="!blog.sync"
-                  >{{$t('blog.confirm')}}</el-button
+                  >{{ $t("blog.confirm") }}</el-button
                 >
               </div>
             </div>
             <a slot="reference">{{
-              blog.sync == 1 ? $t('blog.Synchronizing') : $t('blog.SyncToAr')
+              blog.sync == 1 ? $t("blog.Synchronizing") : $t("blog.SyncToAr")
             }}</a>
           </el-popover>
+        </div>
+        <div class="more" v-if="blog.sync == 2" @click="handleCopy($event)">
+          <a>{{ $t("blog.share") }}</a>
         </div>
       </div>
     </div>
     <div class="footer">
       <div class="author word-ellipsis">
         <i class="fa fa-user-o" aria-hidden="true"></i>
-        <span>{{ blog.author || $t('blog.anonymous') }}</span>
+        <span>{{ blog.author || $t("blog.anonymous") }}</span>
       </div>
       <div class="date">
         <i class="fa fa-calendar" aria-hidden="true"></i>
@@ -64,8 +67,9 @@ import EventHub from "../../../utils/EventHub";
 import {
   getArPrice,
   preparePermPicTransaction,
-  permPicUpload
+  permPicUpload,
 } from "permpic-core-test";
+import Md5 from '../../../utils/Md5';
 
 export default {
   name: "BlogPreview",
@@ -94,7 +98,11 @@ export default {
     readMore() {
       this.$router.push({
         name: "blogArticle",
-        params: { id: this.blog.createTime, isReadable: true },
+        params: {
+          id: this.blog.createTime,
+          isReadable: true,
+          key: this.blog.title,
+        },
       });
     },
     async showArFee() {
@@ -131,6 +139,7 @@ export default {
       // if (metaData.textContent) {
       //   delete metaData.textContent;
       // }
+
       const { address, balance, walletPrivateKey } = this.$store.state.wallet;
       let tx = await preparePermPicTransaction(
         { address, balance, walletPrivateKey },
@@ -145,8 +154,16 @@ export default {
         );
       }
       this.blog.sync = 1;
-      EventHub.$emit("goTip", [this.$t('blog.waitBlockSync')]);
+      EventHub.$emit("goTip", [this.$t("blog.waitBlockSync")]);
       this.visible = false;
+    },
+    handleCopy(event) {
+      EventHub.handleClipboard(
+        `${location.origin}/blog/blog_article/${
+          this.blog.arid
+        }/true/${Md5.permPicEncryptMd5(this.blog.arid)}`,
+        event
+      );
     },
   },
 };

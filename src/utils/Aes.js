@@ -4,7 +4,7 @@
  import Vue from 'vue'
  import CryptoJS from 'crypto-js'
  export default {//加密
-   encrypt(word, keyStr){ 
+   encryptAes(word, keyStr){ 
      keyStr = keyStr ? keyStr : 'abcdefgabcdefg12';
      var key  = CryptoJS.enc.Utf8.parse(keyStr);//Latin1 w8m31+Yy/Nw6thPsMpO5fg==
      var srcs = CryptoJS.enc.Utf8.parse(word);
@@ -12,7 +12,7 @@
      return encrypted.toString();
    },
    //解密
-   decrypt(word, keyStr){  
+   decryptAes(word, keyStr){  
      keyStr = keyStr ? keyStr : 'abcdefgabcdefg12';
      var key  = CryptoJS.enc.Utf8.parse(keyStr);//Latin1 w8m31+Yy/Nw6thPsMpO5fg==
      var decrypt = CryptoJS.AES.decrypt(word, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});

@@ -1,7 +1,9 @@
-import Vue from 'vue'
-import FrontConfig from '../config/FrontConfig'
-import store from '../store'
-import Data from './Data'
+import Vue from "vue";
+import FrontConfig from "../config/FrontConfig";
+import store from "../store";
+import Data from "./Data";
+import Clipboard from "clipboard";
+
 var EventHub = new Vue({
   data: {
     /*padCards*/
@@ -16,52 +18,52 @@ var EventHub = new Vue({
     classify: [
       {
         id: 1,
-        name: '选择语言:'
+        name: "选择语言:",
       },
       {
         id: 2,
-        name: 'HTML'
+        name: "HTML",
       },
       {
         id: 3,
-        name: 'JavaScript'
+        name: "JavaScript",
       },
       {
         id: 4,
-        name: 'JAVA'
+        name: "JAVA",
       },
       {
         id: 5,
-        name: 'SQL'
+        name: "SQL",
       },
       {
         id: 6,
-        name: 'C'
+        name: "C",
       },
       {
         id: 7,
-        name: 'C++'
+        name: "C++",
       },
       {
         id: 8,
-        name: 'XML'
+        name: "XML",
       },
       {
         id: 9,
-        name: 'JSON'
+        name: "JSON",
       },
       {
         id: 10,
-        name: 'CSS'
+        name: "CSS",
       },
       {
         id: 11,
-        name: 'KOTLIN'
+        name: "KOTLIN",
       },
       {
         id: 12,
-        name: 'SCALA'
-      }
+        name: "SCALA",
+      },
     ],
     codeMirrors: new Map(),
 
@@ -73,178 +75,205 @@ var EventHub = new Vue({
       total: 0,
       current: 1,
       pagenum: 10000, //一页十条
-      pagegroup: 5
-    }
+      pagegroup: 5,
+    },
   },
   async created() {
-    this.defaultFolder = this.getDefaultFolder()
-    await this.getBlogsList()
+    this.defaultFolder = this.getDefaultFolder();
+    await this.getBlogsList();
     // this.blogTagMap.set("JavaScript",2);
     // this.blogTagMap.set("ES6",1);
   },
   methods: {
     async getBlogsList() {
-      this.$on('getBlogsList', async params => {
+      this.$on("getBlogsList", async (params = 0) => {
         if (store.state.wallet.address) {
-          await store.dispatch('getPermLogList', {
+          await store.dispatch("getPermLogList", {
             owner: store.state.wallet.address,
-            params
-          })
+            params,
+          });
         }
-        this.blogs = store.state.logList
-        this.pageInfo.total = this.blogs.length
+        this.blogs = store.state.logList;
+        this.pageInfo.total = this.blogs.length;
         if (params) {
-          location.reload()
+          location.reload();
         }
-      })
+      });
     },
     getPadParent(child) {
-      if (!child.parentId) return { children: this.folders }
+      if (!child.parentId) return { children: this.folders };
       for (var i = 0; i < this.folders.length; i++) {
-        var queue = [this.folders[i]]
-        var item
+        var queue = [this.folders[i]];
+        var item;
         while (queue.length) {
-          item = queue.shift()
+          item = queue.shift();
           if (item.id === child.parentId) {
-            return item
+            return item;
           }
           if (item.children && item.children.length) {
             item.children.forEach(function(son) {
-              queue.push(son)
-            })
+              queue.push(son);
+            });
           }
         }
       }
     },
     /*获取当前子节点平级的所有元素*/
     getOrders(miniSelected, orders, parent) {
-      orders.push({ id: -1, name: '交换位置:' })
-      var children = parent.children
+      orders.push({ id: -1, name: "交换位置:" });
+      var children = parent.children;
       for (var j = 0; j < children.length; j++) {
         if (children[j].isShow)
           orders.push({
             id: children[j].id,
-            name: j + ' - ' + children[j].name,
-            isMiniSelected: miniSelected.name === children[j].name
-          })
+            name: j + " - " + children[j].name,
+            isMiniSelected: miniSelected.name === children[j].name,
+          });
       }
     },
     getTypes(miniSelected) {
-      var myType = null
-      if (miniSelected.type && typeof miniSelected.type == 'string') {
-        myType = miniSelected.type.toLocaleUpperCase()
+      var myType = null;
+      if (miniSelected.type && typeof miniSelected.type == "string") {
+        myType = miniSelected.type.toLocaleUpperCase();
       }
       for (var i = 0; i < EventHub.classify.length; i++) {
-        EventHub.classify[i].isMiniSelected = false
+        EventHub.classify[i].isMiniSelected = false;
         if (EventHub.classify[i].name.toLocaleUpperCase() === myType) {
-          EventHub.classify[i].isMiniSelected = true
+          EventHub.classify[i].isMiniSelected = true;
         }
       }
     },
     interchange(swapper, exchangeeId) {
-      var parent = EventHub.getPadParent(swapper)
-      var you, me, exchangee
-      var children = parent.children ? parent.children : parent
+      var parent = EventHub.getPadParent(swapper);
+      var you, me, exchangee;
+      var children = parent.children ? parent.children : parent;
       for (var i = 0; i < children.length; i++) {
-        var child = children[i]
+        var child = children[i];
         if (child.id === exchangeeId) {
-          you = i
-          exchangee = child
+          you = i;
+          exchangee = child;
         }
         if (child.id === swapper.id) {
-          me = i
+          me = i;
         }
       }
-      children.splice(me, 1, exchangee)
-      children.splice(you, 1, swapper)
+      children.splice(me, 1, exchangee);
+      children.splice(you, 1, swapper);
     },
     insertPad(pad, parent, pos) {
       if (!pos) {
-        parent.children.push(pad)
+        parent.children.push(pad);
       } else {
-        var isFinished = false
+        var isFinished = false;
         for (var i = 0; i < parent.children.length; i++) {
           if (parent.children[i].id === pos) {
-            parent.children.splice(i, 0, pad)
-            isFinished = true
-            break
+            parent.children.splice(i, 0, pad);
+            isFinished = true;
+            break;
           }
         }
         if (!isFinished) {
-          parent.children.push(pad)
+          parent.children.push(pad);
         }
       }
     },
     getDefaultFolder() {
       for (var i = 0; i < this.folders.length; i++) {
         if (this.folders[i].id === this.defaultFolderId) {
-          return this.folders[i]
+          return this.folders[i];
         }
       }
       var defaultFolder = {
         parentId: null,
         id: this.defaultFolderId,
-        name: 'DEFAULT',
+        name: "DEFAULT",
         isShow: true,
         isChecked: false,
-        children: []
-      }
-      this.folders.push(defaultFolder)
-      return defaultFolder
+        children: [],
+      };
+      this.folders.push(defaultFolder);
+      return defaultFolder;
     },
     getMyType(type) {
-      if (!type) return null
-      var mode = null
+      if (!type) return null;
+      var mode = null;
       switch (type.toLocaleUpperCase()) {
-        case 'CSS':
-          mode = 'text/css'
-          break
-        case 'XML':
-          mode = 'text/xml'
-          break
-        case 'HTML':
-          mode = 'text/html'
-          break
-        case 'JSON':
-          mode = 'application/json'
-          break
-        case 'JAVASCRIPT':
-          mode = 'application/javascript'
-          break
-        case 'JAVA':
-          mode = 'text/x-java'
-          break
-        case 'KOTLIN':
-          mode = 'text/x-kotlin'
-          break
-        case 'SCALA':
-          mode = 'text/x-scala'
-          break
-        case 'C':
-          mode = 'text/x-c'
-          break
-        case 'C++':
-          mode = 'text/x-c++src'
-        case 'SQL':
-          mode = 'text/x-sql'
-          break
+        case "CSS":
+          mode = "text/css";
+          break;
+        case "XML":
+          mode = "text/xml";
+          break;
+        case "HTML":
+          mode = "text/html";
+          break;
+        case "JSON":
+          mode = "application/json";
+          break;
+        case "JAVASCRIPT":
+          mode = "application/javascript";
+          break;
+        case "JAVA":
+          mode = "text/x-java";
+          break;
+        case "KOTLIN":
+          mode = "text/x-kotlin";
+          break;
+        case "SCALA":
+          mode = "text/x-scala";
+          break;
+        case "C":
+          mode = "text/x-c";
+          break;
+        case "C++":
+          mode = "text/x-c++src";
+        case "SQL":
+          mode = "text/x-sql";
+          break;
       }
-      return mode
+      return mode;
     },
     putBlogTag(tag, isAdd = true) {
-      tag = tag.trim()
+      tag = tag.trim();
       if (tag) {
-        var count = this.blogTagMap.get(tag) || 0
-        count = isAdd ? count + 1 : count - 1
-        if (!isAdd && count === 0) this.blogTagMap.delete(tag)
-        else this.blogTagMap.set(tag, count)
+        var count = this.blogTagMap.get(tag) || 0;
+        count = isAdd ? count + 1 : count - 1;
+        if (!isAdd && count === 0) this.blogTagMap.delete(tag);
+        else this.blogTagMap.set(tag, count);
       }
     },
     makeBlogTags() {
-      this.blogTags.splice(0, this.blogTags.length)
-      this.blogTags.push(...this.blogTagMap.keys())
-    }
-  }
-})
+      this.blogTags.splice(0, this.blogTags.length);
+      this.blogTags.push(...this.blogTagMap.keys());
+    },
+    clipboardSuccess() {
+      console.log("success");
+      this.$emit("goTip", ['Copy Success', true, 1500]);
+    },
+    clipboardError() {
+      console.log("error");
+      this.$emit("goTip", ['Copy Error', false, 1500]);
+    },
+    // 粘贴板
+    handleClipboard(text, event) {
+      const clipboard = new Clipboard(event.target, {
+        text: () => text,
+      });
+      clipboard.on("success", () => {
+        this.clipboardSuccess();
+        clipboard.off("error");
+        clipboard.off("success");
+        clipboard.destroy();
+      });
+      clipboard.on("error", () => {
+        this.clipboardError();
+        clipboard.off("error");
+        clipboard.off("success");
+        clipboard.destroy();
+      });
+      clipboard.onClick(event);
+    },
+  },
+});
 
-export default EventHub
+export default EventHub;

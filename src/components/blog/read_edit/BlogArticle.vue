@@ -1,16 +1,37 @@
 <template>
   <div class="blog-article">
-    <operate-tip v-if="showOperateTip" :result="operateResult" v-model="showOperateTip" :showDuration="showDuration" />
+    <operate-tip
+      v-if="showOperateTip"
+      :result="operateResult"
+      v-model="showOperateTip"
+      :showDuration="showDuration"
+    />
     <transition name="alert-fade">
-      <operator-modal v-if="folderAlert" v-on:deleteBlogAlertOK="deleteBlogAlertOK" v-on:deleteBlogAlertCancel="deleteBlogAlertCancel" :width="alertWidth" :alertTitle="alertTitle" :alertCallBackName="alertCallBackName">
+      <operator-modal
+        v-if="folderAlert"
+        v-on:deleteBlogAlertOK="deleteBlogAlertOK"
+        v-on:deleteBlogAlertCancel="deleteBlogAlertCancel"
+        :width="alertWidth"
+        :alertTitle="alertTitle"
+        :alertCallBackName="alertCallBackName"
+      >
         <template slot="content">
           <div class="content" style="color: #34ff7a">确定删除?</div>
         </template>
       </operator-modal>
     </transition>
     <div class="blog-article-barrier" v-if="readOrEdit.blog">
-      <read-blog v-if="readOrEdit.isReadable" :readOrEdit="readOrEdit" v-on:goBack="goBack" v-on:deleteBlog="deleteBlog"></read-blog>
-      <edit-blog v-if="readOrEdit.isEditable" :readOrEdit="readOrEdit" v-on:goBack="goBack"></edit-blog>
+      <read-blog
+        v-if="readOrEdit.isReadable"
+        :readOrEdit="readOrEdit"
+        v-on:goBack="goBack"
+        v-on:deleteBlog="deleteBlog"
+      ></read-blog>
+      <edit-blog
+        v-if="readOrEdit.isEditable"
+        :readOrEdit="readOrEdit"
+        v-on:goBack="goBack"
+      ></edit-blog>
     </div>
   </div>
 </template>
@@ -28,7 +49,7 @@ export default {
   components: {
     ReadBlog,
     EditBlog,
-    OperatorModal
+    OperatorModal,
   },
   data() {
     return {
@@ -36,7 +57,7 @@ export default {
         isReadable: false,
         isEditable: true,
         blog: {},
-        currentPage: 1
+        currentPage: 1,
       },
       folderAlert: false,
       alertWidth: "150",
@@ -45,7 +66,7 @@ export default {
       showOperateTip: false,
       operateResult: { msg: "操作成功!", status: true },
       showDuration: 1500,
-      operatorBlog: null
+      operatorBlog: null,
     };
   },
   mounted() {
@@ -118,16 +139,19 @@ export default {
       }
     },
     async getPermPicData() {
-      this.$set( this.readOrEdit.blog, 'htmlContent', await getPermPicData(this.readOrEdit.blog.arid)
-      ).toString()
-    }
+      console.log(this.$route);
+      let data = await getPermPicData(
+        this.readOrEdit.blog.arid || this.$route.params.id
+      );
+      this.$set(this.readOrEdit.blog, "htmlContent", data)
+    },
   },
   watch: {
     "$route.params": function () {
       this.findSearchPage();
       window.scrollTo(0, 0);
-    }
-  }
+    },
+  },
 };
 </script>
 
