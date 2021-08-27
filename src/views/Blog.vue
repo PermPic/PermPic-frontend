@@ -25,7 +25,7 @@
         data() {
             return {
                 title: "Hello Light Code Edit",
-                isShowCatalog: true,
+                isShowCatalog: false,
                 isShowPreviewList: false,
                 isShowBlogArticle:true,
             }

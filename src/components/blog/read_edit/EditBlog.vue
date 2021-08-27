@@ -41,6 +41,9 @@
           :placeholder="`${$t('blog.dialog_tags')}`"
         />
       </div>
+      <div class="privacy">
+        {{readOrEdit.blog.privacy}}
+      </div>
     </div>
     <div class="content">
       <div
@@ -154,7 +157,6 @@ export default {
             ...this.$store.state.logList[index],
             ...element,
           };
-          console.log(this.$store.state.logList[index])
         }
       });
       EventHub.makeBlogTags();

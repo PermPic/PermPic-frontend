@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      isShowCatalog: true,
+      isShowCatalog: false,
       LoginModal: false,
       showFileList: false,
       uploadTip: "",
@@ -60,7 +60,10 @@ export default {
     };
   },
   created() {
-    EventHub.$emit("getBlogsList");
+    if (this.$store.state.state == 0) {
+      EventHub.$emit("getBlogsList");
+      this.$store.state.state = 1;
+    }
     if (this.wallet.address) {
       this.getBalance();
     }
@@ -79,7 +82,7 @@ export default {
         blogName: "",
         blogTag: ""
       };
-      this.alertTitle = this.$t('blog.uploadLogin');
+      this.alertTitle = this.$t("blog.uploadLogin");
       this.alertWidth = 362;
       this.alertCallBackName = ["loginAlertOk", "loginAlertCancel"];
       this.uploadTip = "";
@@ -93,7 +96,7 @@ export default {
       this.getBalance();
       if (this.wallet.address) {
         this.LoginModal = false;
-        EventHub.$emit("goTip", [this.$t('blog.loginSuccess')]);
+        EventHub.$emit("goTip", [this.$t("blog.loginSuccess")]);
         EventHub.$emit("getBlogsList", "1");
       }
     },

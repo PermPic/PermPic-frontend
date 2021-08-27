@@ -22,6 +22,9 @@
         <span v-for="tag in readOrEdit.blog.tags">#{{ tag }}</span>
         <span v-if="!readOrEdit.blog.tags">#</span>
       </div>
+      <div class="privacy">
+        {{readOrEdit.blog.privacy}}
+      </div>
     </div>
     <div class="content ql-editor" v-html="readOrEdit.blog.htmlContent"></div>
     <div class="read-btn-group">
@@ -29,13 +32,13 @@
         class="hvr-wobble-top"
         href="javascript:;"
         @click="editBlog"
-        v-if="!readOrEdit.blog.sync"
+        v-if="!readOrEdit.blog.sync && showAction"
       >
         {{ $t("blog.edit") }}</a
       >
       <!-- <a class="hvr-wobble-top" href="javascript:;" @click="deleteBlog">删除</a> -->
     </div>
-    <div class="continue-read">
+    <div class="continue-read" v-if="showAction">
       <div class="last-page hvr-wobble-top" @click="lastPage">
         <a href="javascript:;"
           ><i class="fa fa-angle-double-left" aria-hidden="true"></i>
@@ -64,10 +67,11 @@ export default {
   model: {
     event: "readable",
   },
-
   mounted() {},
   data() {
-    return {};
+    return {
+      showAction: this.$store.state.wallet.walletPrivateKey
+    };
   },
   methods: {
     editBlog() {

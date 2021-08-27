@@ -1,37 +1,16 @@
 <template>
   <div class="blog-article">
-    <operate-tip
-      v-if="showOperateTip"
-      :result="operateResult"
-      v-model="showOperateTip"
-      :showDuration="showDuration"
-    />
+    <operate-tip v-if="showOperateTip" :result="operateResult" v-model="showOperateTip" :showDuration="showDuration" />
     <transition name="alert-fade">
-      <operator-modal
-        v-if="folderAlert"
-        v-on:deleteBlogAlertOK="deleteBlogAlertOK"
-        v-on:deleteBlogAlertCancel="deleteBlogAlertCancel"
-        :width="alertWidth"
-        :alertTitle="alertTitle"
-        :alertCallBackName="alertCallBackName"
-      >
+      <operator-modal v-if="folderAlert" v-on:deleteBlogAlertOK="deleteBlogAlertOK" v-on:deleteBlogAlertCancel="deleteBlogAlertCancel" :width="alertWidth" :alertTitle="alertTitle" :alertCallBackName="alertCallBackName">
         <template slot="content">
           <div class="content" style="color: #34ff7a">确定删除?</div>
         </template>
       </operator-modal>
     </transition>
     <div class="blog-article-barrier" v-if="readOrEdit.blog">
-      <read-blog
-        v-if="readOrEdit.isReadable"
-        :readOrEdit="readOrEdit"
-        v-on:goBack="goBack"
-        v-on:deleteBlog="deleteBlog"
-      ></read-blog>
-      <edit-blog
-        v-if="readOrEdit.isEditable"
-        :readOrEdit="readOrEdit"
-        v-on:goBack="goBack"
-      ></edit-blog>
+      <read-blog v-if="readOrEdit.isReadable" :readOrEdit="readOrEdit" v-on:goBack="goBack" v-on:deleteBlog="deleteBlog"></read-blog>
+      <edit-blog v-if="readOrEdit.isEditable" :readOrEdit="readOrEdit" v-on:goBack="goBack"></edit-blog>
     </div>
   </div>
 </template>
@@ -42,14 +21,16 @@ import EditBlog from "./EditBlog";
 import EventHub from "../../../utils/EventHub";
 import OperatorModal from "../../modal/OperatorModal";
 import Utils from "../../../utils/Utils";
-import { getPermPicData } from "permpic-core-test";
+import { getPermPicData, getPermPicByIds } from "permpic-core-test";
+import Aes from "../../../utils/Aes";
+import Md5 from "../../../utils/Md5";
 
 export default {
   name: "BlogArticle",
   components: {
     ReadBlog,
     EditBlog,
-    OperatorModal,
+    OperatorModal
   },
   data() {
     return {
@@ -57,7 +38,7 @@ export default {
         isReadable: false,
         isEditable: true,
         blog: {},
-        currentPage: 1,
+        currentPage: 1
       },
       folderAlert: false,
       alertWidth: "150",
@@ -66,7 +47,7 @@ export default {
       showOperateTip: false,
       operateResult: { msg: "操作成功!", status: true },
       showDuration: 1500,
-      operatorBlog: null,
+      operatorBlog: null
     };
   },
   mounted() {
@@ -139,19 +120,38 @@ export default {
       }
     },
     async getPermPicData() {
-      console.log(this.$route);
       let data = await getPermPicData(
         this.readOrEdit.blog.arid || this.$route.params.id
       );
-      this.$set(this.readOrEdit.blog, "htmlContent", data)
-    },
+      if (
+        this.readOrEdit.blog.privacy == "private" ||
+        this.$store.state.wallet.address == "Login"
+      ) {
+        data = Aes.decryptAes(
+          data,
+          this.readOrEdit.blog.createTime || this.$route.params.key
+        );
+      }
+      if (!this.readOrEdit.blog.arid) {
+        let logItem = {};
+        let tags = (await getPermPicByIds(this.$route.params.id))[0].node.tags;
+        for (let index = 0; index < tags.length; index++) {
+          logItem[tags[index].name] = tags[index].value;
+        }
+        if (logItem.tags) {
+          logItem.tags = logItem.tags.split(",");
+        }
+        this.readOrEdit.blog = logItem;
+      }
+      this.$set(this.readOrEdit.blog, "htmlContent", data);
+    }
   },
   watch: {
     "$route.params": function () {
       this.findSearchPage();
       window.scrollTo(0, 0);
-    },
-  },
+    }
+  }
 };
 </script>
 

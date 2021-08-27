@@ -8,7 +8,8 @@ Vue.use(Vuex)
 const state = {
   wallet: {},
   logList: [],
-  tags: []
+  tags: [],
+  state: 0
 }
 
 const mutations = {

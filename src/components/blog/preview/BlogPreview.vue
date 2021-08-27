@@ -13,25 +13,14 @@
           <a>{{ $t("blog.readAll") }}</a>
         </div>
         <div class="more" v-if="isAll && (!blog.sync || blog.sync == 1)">
-          <el-popover
-            placement="top"
-            width="160"
-            v-model="visible"
-            @show="showArFee"
-          >
+          <el-popover placement="top" width="160" v-model="visible" @show="showArFee">
             <div v-loading="popLoading">
               <p>{{ $t("blog.syncFee") }}<br />{{ arFee }}AR</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="visible = false">{{
                   $t("blog.cancel")
                 }}</el-button>
-                <el-button
-                  type="danger"
-                  size="mini"
-                  @click="syncAr"
-                  v-if="!blog.sync"
-                  >{{ $t("blog.confirm") }}</el-button
-                >
+                <el-button type="danger" size="mini" @click="syncAr" v-if="!blog.sync">{{ $t("blog.confirm") }}</el-button>
               </div>
             </div>
             <a slot="reference">{{
@@ -64,24 +53,26 @@
 <script>
 import FrontConfig from "../../../config/FrontConfig";
 import EventHub from "../../../utils/EventHub";
+import Aes from "../../../utils/Aes";
+
 import {
   getArPrice,
   preparePermPicTransaction,
-  permPicUpload,
+  permPicUpload
 } from "permpic-core-test";
-import Md5 from '../../../utils/Md5';
+import Md5 from "../../../utils/Md5";
 
 export default {
   name: "BlogPreview",
   props: {
-    blog: Object,
+    blog: Object
   },
   data() {
     return {
       isAll: true,
       visible: false,
       arFee: 0,
-      popLoading: false,
+      popLoading: false
     };
   },
   mounted() {},
@@ -92,7 +83,7 @@ export default {
           Math.floor(Math.random() * FrontConfig.blogBanners.length)
         ];
       return require("../../../static/img/blog_banner/" + bannerImg);
-    },
+    }
   },
   methods: {
     readMore() {
@@ -101,8 +92,8 @@ export default {
         params: {
           id: this.blog.createTime,
           isReadable: true,
-          key: this.blog.title,
-        },
+          key: this.blog.title
+        }
       });
     },
     async showArFee() {
@@ -126,8 +117,8 @@ export default {
               isShowBanner: this.blog.isShowBanner,
               createTime: this.blog.createTime,
               updateTime: this.blog.updateTime,
-              "Content-Type": "text/html",
-            },
+              "Content-Type": "text/html"
+            }
           };
         }
       });
@@ -141,11 +132,15 @@ export default {
       // }
 
       const { address, balance, walletPrivateKey } = this.$store.state.wallet;
+      
       let tx = await preparePermPicTransaction(
         { address, balance, walletPrivateKey },
-        this.blog.htmlContent,
+        this.blog.privacy == "public"
+          ? this.blog.htmlContent
+          : Aes.encryptAes(this.blog.htmlContent, this.blog.createTime.toString()),
         metaData
       );
+
       const uploader = await permPicUpload(tx);
       while (!uploader.isComplete) {
         await uploader.uploadChunk();
@@ -159,13 +154,13 @@ export default {
     },
     handleCopy(event) {
       EventHub.handleClipboard(
-        `${location.origin}/blog/blog_article/${
+        `${location.origin}/#/blog/blog_article/${
           this.blog.arid
-        }/true/${Md5.permPicEncryptMd5(this.blog.arid)}`,
+        }/true/${this.blog.createTime}`,
         event
       );
-    },
-  },
+    }
+  }
 };
 </script>
 
