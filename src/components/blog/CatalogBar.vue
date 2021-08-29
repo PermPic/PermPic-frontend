@@ -24,7 +24,7 @@
       <div>
         <ul class="catalog-operator">
           <li id="add-blog">
-            <span class="new-file hvr-wobble-top" @click="createBlogAlert"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
+            <span class="new-file hvr-wobble-top" @click="createBlogAlert"><i class="fa fa-plus-circle" aria-hidden="true" :alt="$t('blog.create')"></i></span>
           </li>
         </ul>
       </div>
@@ -67,9 +67,7 @@ export default {
       isShowTags: true,
       blogList: this.$store.state.logList /*日志列表*/,
       blogTags: this.$store.state.tags,
-
       checkTagsState: null,
-
       folderAlert: false,
       alertWidth: "300",
       blogName: null,
@@ -77,7 +75,8 @@ export default {
       alertMsg: null,
       blog: {
         blogName: "",
-        blogTag: ""
+        blogTag: "",
+        privacy: "private"
       }
     };
   },
@@ -98,16 +97,17 @@ export default {
     createBlogAlert() {
       this.blog = {
         blogName: "",
-        blogTag: ""
+        blogTag: "",
+        privacy: "private"
       };
-      this.alertTitle = "新建日志";
+      this.alertTitle = this.$t("blog.create");
       this.alertComponent = "updateBlogModal";
       this.alertWidth = 300;
       this.alertCallBackName = ["createBlogAlertOK", "createBlogAlertCancel"];
       this.folderAlert = true;
     },
     createBlogAlertOK() {
-      var blogName, blogTags;
+      let blogName, blogTags;
       if (!this.blog.blogName || !this.blog.blogName.trim()) {
         blogName = "untitled";
       } else {
@@ -127,16 +127,22 @@ export default {
         title: blogName,
         tags: blogTags,
         isShowBanner: true,
+        privacy: this.blog.privacy,
         createTime: Date.parse(new Date()),
         updateTime: Date.parse(new Date())
       };
-      this.blogList.splice(0, 0, newBlog);
+      // this.blogList.unshift(newBlog);
       this.folderAlert = false;
-      EventHub.$emit("goTip", ["创建成功!"]);
-      this.$store.state.logList.push(newBlog);
+      EventHub.$emit("goTip", [this.$t("blog.createSuccess")]);
+      this.$store.state.logList.unshift(newBlog);
+      this.blogList = this.$store.state.logList
       this.$router.push({
         name: "blogArticle",
-        params: { id: newBlog.createTime, isReadable: false }
+        params: {
+          id: newBlog.createTime,
+          isReadable: false,
+          key: newBlog.title
+        }
       });
     },
     createBlogAlertCancel() {
@@ -145,7 +151,7 @@ export default {
     readBlog(blog) {
       this.$router.push({
         name: "blogArticle",
-        params: { id: blog.createTime, isReadable: true }
+        params: { id: blog.createTime, isReadable: true, key: blog.title }
       });
     },
     searchBlogByTag(tag) {
@@ -153,6 +159,7 @@ export default {
         if (this.checkTagsState === tag) {
           this.checkTagsState = null;
           this.blogList = this.$store.state.logList;
+          EventHub.$emit("changeBlogList", this.blogList);
           return;
         } else {
           this.checkTagsState = tag;
@@ -165,6 +172,7 @@ export default {
           return v.tags.indexOf(tag) > -1;
         }
       });
+      EventHub.$emit("changeBlogList", this.blogList);
     },
     findCheckTagsState(tag) {
       return this.checkTagsState === tag;

@@ -10,28 +10,33 @@
       <p class="article">{{ blog.previewContent }}</p>
       <div class="more-group">
         <div class="more" v-if="isAll" @click="readMore">
-          <a>阅读全文</a>
+          <a>{{ $t("blog.readAll") }}</a>
         </div>
         <div class="more" v-if="isAll && (!blog.sync || blog.sync == 1)">
           <el-popover placement="top" width="160" v-model="visible" @show="showArFee">
             <div v-loading="popLoading">
-              <p>同步需要花费<br />{{ arFee }}AR</p>
+              <p>{{ $t("blog.syncFee") }}<br />{{ arFee }}AR</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                <el-button type="danger" size="mini" @click="syncAr" v-if="!blog.sync">确定</el-button>
+                <el-button size="mini" type="text" @click="visible = false">{{
+                  $t("blog.cancel")
+                }}</el-button>
+                <el-button type="danger" size="mini" @click="syncAr" v-if="!blog.sync">{{ $t("blog.confirm") }}</el-button>
               </div>
             </div>
             <a slot="reference">{{
-              blog.sync == 1 ? "正在同步" : "同步到ARweave"
+              blog.sync == 1 ? $t("blog.Synchronizing") : $t("blog.SyncToAr")
             }}</a>
           </el-popover>
+        </div>
+        <div class="more" v-if="blog.sync == 2" @click="handleCopy($event)">
+          <a>{{ $t("blog.share") }}</a>
         </div>
       </div>
     </div>
     <div class="footer">
       <div class="author word-ellipsis">
         <i class="fa fa-user-o" aria-hidden="true"></i>
-        <span>{{ blog.author || "匿名" }}</span>
+        <span>{{ blog.author || $t("blog.anonymous") }}</span>
       </div>
       <div class="date">
         <i class="fa fa-calendar" aria-hidden="true"></i>
@@ -48,12 +53,14 @@
 <script>
 import FrontConfig from "../../../config/FrontConfig";
 import EventHub from "../../../utils/EventHub";
+import Aes from "../../../utils/Aes";
+
 import {
   getArPrice,
   preparePermPicTransaction,
-  permPicUpload,
-  getPermPicData
+  permPicUpload
 } from "permpic-core-test";
+import Md5 from "../../../utils/Md5";
 
 export default {
   name: "BlogPreview",
@@ -82,7 +89,11 @@ export default {
     readMore() {
       this.$router.push({
         name: "blogArticle",
-        params: { id: this.blog.createTime, isReadable: true }
+        params: {
+          id: this.blog.createTime,
+          isReadable: true,
+          key: this.blog.title
+        }
       });
     },
     async showArFee() {
@@ -92,7 +103,7 @@ export default {
     },
     async syncAr() {
       if (this.$store.state.wallet.balance - this.arFee < 0) {
-        EventHub.$emit("goTip", ["AR 余额不足!", false, 1500]);
+        EventHub.$emit("goTip", [this.$t(blog.insufficient), false, 1500]);
         return false;
       }
       let metaData;
@@ -111,13 +122,28 @@ export default {
           };
         }
       });
-      delete metaData.htmlContent;
-      delete metaData.textContent;
+      metaData.htmlContent && delete metaData.htmlContent;
+      metaData.textContent && delete metaData.textContent;
+      // if (metaData.htmlContent) {
+      //   delete metaData.htmlContent;
+      // }
+      // if (metaData.textContent) {
+      //   delete metaData.textContent;
+      // }
+
+      const { address, balance, walletPrivateKey } = this.$store.state.wallet;
+
       let tx = await preparePermPicTransaction(
-        this.$store.state.wallet,
-        this.blog.htmlContent,
+        { address, balance, walletPrivateKey },
+        this.blog.privacy == "public"
+          ? this.blog.htmlContent
+          : Aes.encryptAes(
+              this.blog.htmlContent,
+              Md5.permPicEncryptMd5(Number(this.blog.createTime))
+            ),
         metaData
       );
+
       const uploader = await permPicUpload(tx);
       while (!uploader.isComplete) {
         await uploader.uploadChunk();
@@ -126,8 +152,16 @@ export default {
         );
       }
       this.blog.sync = 1;
-      EventHub.$emit("goTip", ["等待区块同步!"]);
+      EventHub.$emit("goTip", [this.$t("blog.waitBlockSync")]);
       this.visible = false;
+    },
+    handleCopy(event) {
+      EventHub.handleClipboard(
+        `${location.origin + location.pathname}#/blog/blog_article/${
+          this.blog.arid
+        }/true/${Md5.permPicEncryptMd5(Number(this.blog.createTime))}`,
+        event
+      );
     }
   }
 };

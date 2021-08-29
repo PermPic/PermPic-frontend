@@ -12,12 +12,12 @@
         <div class="nav">
           <ul>
             <li>
-              <a href="javascript:;" @click="goHome" class="hvr-wobble-top">主页</a>
+              <a href="javascript:;" @click="goHome" class="hvr-wobble-top">{{$t('blog.home')}}</a>
             </li>
           </ul>
         </div>
         <div class="shortcut-menu">
-          <a href="javascript:;" class="hvr-wobble-top" @click="clickShowCatalog">日志
+          <a href="javascript:;" class="hvr-wobble-top" @click="clickShowCatalog">{{$t('blog.blog')}}
             <i class="fa" :class="{
                 'fa-arrow-right': isShowCatalog,
                 ' fa-arrow-left': !isShowCatalog,
@@ -36,7 +36,7 @@
 <script>
 import EventHub from "../../utils/EventHub";
 import uploadLoginModal from "../../components/modal/uploadLoginModal";
-import { getAddressForWallet,  getWalletArBalance} from "permpic-core-test";
+import { getAddressForWallet, getWalletArBalance } from "permpic-core-test";
 
 export default {
   name: "ProfileBar",
@@ -48,29 +48,42 @@ export default {
   },
   data() {
     return {
-      isShowCatalog: true,
+      isShowCatalog: false,
       LoginModal: false,
       showFileList: false,
       uploadTip: "",
       wallet: {
         address: this.$store.state.wallet.address || "Login",
-        walletPrivateKey: {},
+        walletPrivateKey: this.$store.state.wallet.walletPrivateKey,
         balance: this.$store.state.wallet.balance
       }
     };
   },
   created() {
-    EventHub.$emit("getBlogsList");
+    if (this.$store.state.refresh == 0) {
+      EventHub.$emit("getBlogsList");
+      this.$store.state.refresh = 1;
+    }
     if (this.wallet.address) {
-      this.getBalance()
+      this.getBalance();
     }
   },
   methods: {
     clickShowCatalog() {
+      if (this.$store.state.wallet.address === "Login") {
+        this.openLoginModal();
+        return false;
+      }
       this.isShowCatalog = !this.isShowCatalog;
       this.$emit("isShowCatalog", this.isShowCatalog);
     },
     goHome() {
+      
+      if (this.$store.state.wallet.address === "Login") {
+        this.openLoginModal();
+        return false;
+      }
+      this.$store.state.refresh = 0;
       this.$router.push(`/blog/preview_list/${EventHub.pageInfo.current}`);
     },
     createBlogAlertCancel() {},
@@ -79,7 +92,7 @@ export default {
         blogName: "",
         blogTag: ""
       };
-      this.alertTitle = "上传登录";
+      this.alertTitle = this.$t("blog.uploadLogin");
       this.alertWidth = 362;
       this.alertCallBackName = ["loginAlertOk", "loginAlertCancel"];
       this.uploadTip = "";
@@ -90,10 +103,10 @@ export default {
       this.wallet.address = await getAddressForWallet(
         this.wallet.walletPrivateKey
       );
-      this.getBalance()
+      this.getBalance();
       if (this.wallet.address) {
         this.LoginModal = false;
-        EventHub.$emit("goTip", ["登录成功!"]);
+        EventHub.$emit("goTip", [this.$t("blog.loginSuccess")]);
         EventHub.$emit("getBlogsList", "1");
       }
     },

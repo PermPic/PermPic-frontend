@@ -30,10 +30,10 @@ export default new Router({
                 },
                 {
                     name:'blogArticle',
-                    path: 'blog_article/:id/:isReadable',
+                    path: 'blog_article/:id/:isReadable/:key',
                     component: BlogArticle,
-                    props: {id: '', isReadable: true }
-                },
+                    props: {id: '', isReadable: true, key: '' }
+                }, 
             ]
         }
     ]

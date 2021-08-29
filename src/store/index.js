@@ -8,7 +8,8 @@ Vue.use(Vuex)
 const state = {
   wallet: {},
   logList: [],
-  tags: []
+  tags: [],
+  refresh: 0
 }
 
 const mutations = {
@@ -33,7 +34,6 @@ const actions = {
             logItem[tags[index].name] = tags[index].value
           }
           log.node.block ? (logItem.sync = 2) : (logItem.sync = 1)
-          console.log(logItem)
           if (logItem.tags) {
             logItem.tags = logItem.tags.split(',')
           }
