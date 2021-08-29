@@ -8,7 +8,7 @@ import Md5 from './Md5'
 export default {
   //加密
   encryptAes(word, keyStr) {
-    let key = CryptoJS.enc.Utf8.parse(Md5.permPicEncryptMd5(keyStr)) //Latin1 w8m31+Yy/Nw6thPsMpO5fg==
+    let key = CryptoJS.enc.Utf8.parse(keyStr) //Latin1 w8m31+Yy/Nw6thPsMpO5fg==
     let srcs = CryptoJS.enc.Utf8.parse(word)
     let encrypted = CryptoJS.AES.encrypt(srcs, key, {
       mode: CryptoJS.mode.ECB,
@@ -18,7 +18,7 @@ export default {
   },
   //解密
   decryptAes(word, keyStr) {
-    let key = CryptoJS.enc.Utf8.parse(Md5.permPicEncryptMd5(keyStr)) //Latin1 w8m31+Yy/Nw6thPsMpO5fg==
+    let key = CryptoJS.enc.Utf8.parse(keyStr) //Latin1 w8m31+Yy/Nw6thPsMpO5fg==
     let decrypt = CryptoJS.AES.decrypt(word, key, {
       mode: CryptoJS.mode.ECB,
       padding: CryptoJS.pad.Pkcs7

@@ -60,9 +60,9 @@ export default {
     };
   },
   created() {
-    if (this.$store.state.state == 0) {
+    if (this.$store.state.refresh == 0) {
       EventHub.$emit("getBlogsList");
-      this.$store.state.state = 1;
+      this.$store.state.refresh = 1;
     }
     if (this.wallet.address) {
       this.getBalance();

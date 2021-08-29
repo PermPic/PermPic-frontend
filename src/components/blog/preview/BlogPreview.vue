@@ -132,12 +132,15 @@ export default {
       // }
 
       const { address, balance, walletPrivateKey } = this.$store.state.wallet;
-      
+
       let tx = await preparePermPicTransaction(
         { address, balance, walletPrivateKey },
         this.blog.privacy == "public"
           ? this.blog.htmlContent
-          : Aes.encryptAes(this.blog.htmlContent, this.blog.createTime.toString()),
+          : Aes.encryptAes(
+              this.blog.htmlContent,
+              Md5.permPicEncryptMd5(Number(this.blog.createTime))
+            ),
         metaData
       );
 
@@ -154,9 +157,9 @@ export default {
     },
     handleCopy(event) {
       EventHub.handleClipboard(
-        `${location.origin}/#/blog/blog_article/${
+        `${location.origin + location.pathname}#/blog/blog_article/${
           this.blog.arid
-        }/true/${this.blog.createTime}`,
+        }/true/${Md5.permPicEncryptMd5(Number(this.blog.createTime))}`,
         event
       );
     }

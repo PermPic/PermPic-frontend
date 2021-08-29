@@ -53,7 +53,7 @@ export default {
   mounted() {
     this.findSearchPage();
     var myPos = this.$store.state.logList[this.readOrEdit.blog];
-    this.getPermPicData();
+    this.getPermPicDataContent();
     if (myPos)
       EventHub.pageInfo.current = Math.ceil(
         (myPos + 1) / EventHub.pageInfo.pagenum
@@ -119,7 +119,7 @@ export default {
         EventHub.pageInfo.current = 1;
       }
     },
-    async getPermPicData() {
+    async getPermPicDataContent() {
       let data = await getPermPicData(
         this.readOrEdit.blog.arid || this.$route.params.id
       );
@@ -127,10 +127,10 @@ export default {
         this.readOrEdit.blog.privacy == "private" ||
         this.$store.state.wallet.address == "Login"
       ) {
-        data = Aes.decryptAes(
-          data,
-          this.readOrEdit.blog.createTime || this.$route.params.key
-        );
+        let key = this.readOrEdit.blog.createTime
+          ? Md5.permPicEncryptMd5(Number(this.readOrEdit.blog.createTime))
+          : this.$route.params.key;
+        data = Aes.decryptAes(data, key);
       }
       if (!this.readOrEdit.blog.arid) {
         let logItem = {};

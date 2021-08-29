@@ -6,7 +6,7 @@
                     <router-link to="/pads">Pads</router-link>
                 </li> -->
         <li>
-          <router-link to="/blog">Blog</router-link>
+          <router-link to="/blog">PermPic</router-link>
         </li>
       </ul>
       <ul>

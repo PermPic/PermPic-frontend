@@ -9,7 +9,7 @@ const state = {
   wallet: {},
   logList: [],
   tags: [],
-  state: 0
+  refresh: 0
 }
 
 const mutations = {

@@ -44,7 +44,7 @@ export default {
     }
   },
   created: function () {
-    this.$store.state.state = 0
+    this.$store.state.refresh = 0
     EventHub.$on("goTip", this.goTip);
   },
   beforeDestroy: function () {
