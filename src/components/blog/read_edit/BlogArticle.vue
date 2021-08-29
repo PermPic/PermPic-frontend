@@ -120,28 +120,28 @@ export default {
       }
     },
     async getPermPicDataContent() {
-      let data = await getPermPicData(
-        this.readOrEdit.blog.arid || this.$route.params.id
-      );
-      if (
-        this.readOrEdit.blog.privacy == "private" ||
-        this.$store.state.wallet.address == "Login"
-      ) {
-        let key = this.readOrEdit.blog.createTime
-          ? Md5.permPicEncryptMd5(Number(this.readOrEdit.blog.createTime))
-          : this.$route.params.key;
-        data = Aes.decryptAes(data, key);
-      }
       if (!this.readOrEdit.blog.arid) {
         let logItem = {};
-        let tags = (await getPermPicByIds(this.$route.params.id))[0].node.tags;
+        let node = (await getPermPicByIds(this.$route.params.id))[0].node
+        let tags = node.tags;
         for (let index = 0; index < tags.length; index++) {
           logItem[tags[index].name] = tags[index].value;
         }
         if (logItem.tags) {
           logItem.tags = logItem.tags.split(",");
         }
+        delete logItem.createTime;
+        node.block ? (logItem.sync = 2) : (logItem.sync = 1);
         this.readOrEdit.blog = logItem;
+      }
+      let data = await getPermPicData(
+        this.readOrEdit.blog.arid || this.$route.params.id
+      );
+      if (this.readOrEdit.blog.privacy != "public") {
+        let key = this.readOrEdit.blog.createTime
+          ? Md5.permPicEncryptMd5(Number(this.readOrEdit.blog.createTime))
+          : this.$route.params.key;
+        data = Aes.decryptAes(data, key);
       }
       this.$set(this.readOrEdit.blog, "htmlContent", data);
     }

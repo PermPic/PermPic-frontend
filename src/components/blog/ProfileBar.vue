@@ -70,10 +70,20 @@ export default {
   },
   methods: {
     clickShowCatalog() {
+      if (this.$store.state.wallet.address === "Login") {
+        this.openLoginModal();
+        return false;
+      }
       this.isShowCatalog = !this.isShowCatalog;
       this.$emit("isShowCatalog", this.isShowCatalog);
     },
     goHome() {
+      
+      if (this.$store.state.wallet.address === "Login") {
+        this.openLoginModal();
+        return false;
+      }
+      this.$store.state.refresh = 0;
       this.$router.push(`/blog/preview_list/${EventHub.pageInfo.current}`);
     },
     createBlogAlertCancel() {},

@@ -1,7 +1,7 @@
 <template>
   <div class="read-blog">
     <div class="go-back">
-      <button class="hvr-wobble-top" @click="$emit('goBack')">
+      <button class="hvr-wobble-top" @click="$emit('goBack')" v-if="showAction">
         {{ $t("blog.back") }}
       </button>
     </div>

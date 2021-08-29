@@ -24,7 +24,7 @@
       <div>
         <ul class="catalog-operator">
           <li id="add-blog">
-            <span class="new-file hvr-wobble-top" @click="createBlogAlert"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
+            <span class="new-file hvr-wobble-top" @click="createBlogAlert"><i class="fa fa-plus-circle" aria-hidden="true" :alt="$t('blog.create')"></i></span>
           </li>
         </ul>
       </div>
